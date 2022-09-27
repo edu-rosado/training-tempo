@@ -1,5 +1,5 @@
 <script>
-    import FloatingInput from "$lib/FloatingInput.svelte";
+    import FloatingInput from "$lib/components/FloatingInput.svelte";
 
     export /**
      * @type {any}

@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import * as Tone from "tone";
 
-    import FloatingInput from "$lib/FloatingInput.svelte";
+    import FloatingInput from "$lib/components/FloatingInput.svelte";
 
     let numMeasures = 5;
     let secsPerMeasure = 2;
