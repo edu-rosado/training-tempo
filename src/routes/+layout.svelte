@@ -39,10 +39,10 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </svelte:head>
 
-<div class="h-screen flex flex-col">
-    <div class="h-12 bg-indigo-600 text-white flex items-center justify-between px-5">
+<div class="h-screen flex flex-col overflow-hidden">
+    <div class="h-14 bg-indigo-600 text-white flex items-center justify-between px-5">
         {#if pathList[1].length > 0}
-            <a href={prevUrl}><span class="material-icons mr-3">arrow_back_ios</span></a>
+            <a class="flex" href={prevUrl}><span class="material-icons mr-3">arrow_back_ios</span></a>
         {/if}
         <h1 class="flex-grow text-center" style="margin-top: 0.1rem;">{title}</h1>
 
