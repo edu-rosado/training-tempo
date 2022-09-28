@@ -39,19 +39,21 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </svelte:head>
 
-<div class="h-10 bg-indigo-600 text-white flex items-center justify-between px-5">
-    {#if pathList[1].length > 0}
-        <a href={prevUrl}><span class="material-icons mr-3">arrow_back_ios</span></a>
-    {/if}
-    <h1 class="flex-grow text-center" style="margin-top: 0.1rem;">{title}</h1>
+<div class="h-screen flex flex-col">
+    <div class="h-12 bg-indigo-600 text-white flex items-center justify-between px-5">
+        {#if pathList[1].length > 0}
+            <a href={prevUrl}><span class="material-icons mr-3">arrow_back_ios</span></a>
+        {/if}
+        <h1 class="flex-grow text-center" style="margin-top: 0.1rem;">{title}</h1>
 
-    {#if $page.url.pathname !== "/music-config"}
-        <a href="/music-config"><span class="material-icons cursor-pointer">music_note</span></a>
-    {/if}
-</div>
+        {#if $page.url.pathname !== "/music-config"}
+            <a href="/music-config" class="flex"><span class="material-icons cursor-pointer">music_note</span></a>
+        {/if}
+    </div>
 
-<div class="w-screen flex flex-col" style="height: calc(100vh - 2.5rem);">
-    <slot />
+    <div class="flex flex-col flex-grow">
+        <slot />
+    </div>
 </div>
 
 <style>
