@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 
 export const soundStore = writable({
-    selected: null,
+    selected: "default-1",
     soundSets: [
         {
             name: "mi custom 1",
@@ -29,8 +29,7 @@ function setupSoundStore_aux() {
     try {
         tempVal = JSON.parse(localStorage.sounds);
     } catch {}
-    if (typeof tempVal === "object") {
-        // console.log(34, tempVal);
+    if (typeof tempVal === "object" && tempVal !== null) {
         soundStore.set(tempVal);
     }
     soundStore.subscribe((newVal) => {
