@@ -15,6 +15,11 @@
         return pathList.slice(0, pathList.length - 1).join("/");
     }
 
+    /**
+     * @type {number}
+     */
+    let innerHeight;
+
     $: pathList = $page.url.pathname.split("/");
     $: prevUrl = updatePrevUrl(pathList);
 
@@ -39,14 +44,16 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 </svelte:head>
 
-<div class="h-screen flex flex-col overflow-hidden">
+<svelte:window bind:innerHeight />
+
+<div class="h-screen flex flex-col overflow-hidden" style={`height: ${innerHeight}px;`}>
     <div class="h-14 bg-indigo-600 text-white flex items-center justify-between px-5">
         {#if pathList[1].length > 0}
             <a class="flex" href={prevUrl}><span class="material-icons mr-3">arrow_back_ios</span></a>
         {/if}
         <h1 class="flex-grow text-center" style="margin-top: 0.1rem;">{title}</h1>
 
-        {#if $page.url.pathname !== "/music-config"}
+        {#if pathList[1].length == 0}
             <a href="/music-config" class="flex"><span class="material-icons cursor-pointer">music_note</span></a>
         {/if}
     </div>
