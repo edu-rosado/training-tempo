@@ -60,23 +60,11 @@
         </div>
         <span
             class="material-icons col-span-2 my-auto mx-auto p-1 rounded-full bg-sky-200 text-sky-500 cursor-pointer"
-            style="font-size: 2rem; width: fit-content; height: fit-content;">play_arrow</span
-        >
-    </div>
-
-    <div class="grid grid-cols-6 bg-sky-100/50 p-2 roundex-sm shadow-md font-light">
-        <span
-            class={selectedSoundSet === "default-2" ? checkIconActiveClass : checkIconBaseClass}
             style="font-size: 2rem; width: fit-content; height: fit-content;"
-            on:click={() => (selectedSoundSet = "default-2")}>done</span
-        >
-        <div class="col-span-3">
-            <div>Default voice</div>
-            <div class="text-sm">Multi sound</div>
-        </div>
-        <span
-            class="material-icons col-span-2 my-auto mx-auto p-1 rounded-full bg-sky-200 text-sky-500 cursor-pointer"
-            style="font-size: 2rem; width: fit-content; height: fit-content;">play_arrow</span
+            on:click={() => {
+                const audio = new Audio("/house-kick-bassy-punchy-4.wav");
+                audio.play();
+            }}>play_arrow</span
         >
     </div>
 
@@ -97,10 +85,6 @@
                 <div class="text-sm">Multi sound</div>
             </div>
             <div class="flex justify-center col-span-2">
-                <span
-                    class="material-icons my-auto p-1 rounded-full bg-sky-200 text-sky-500 cursor-pointer"
-                    style="font-size: 2rem; width: fit-content; height: fit-content;">play_arrow</span
-                >
                 <a class="flex items-center" href="music-config/sounds/{index}">
                     <span
                         class="material-icons my-auto ml-2 p-2 rounded-full bg-gray-200 cursor-pointer"

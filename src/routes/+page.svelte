@@ -100,7 +100,7 @@
      */
     let weak_tone;
 
-    let dropdownIsOpen = true;
+    let dropdownIsOpen = false;
     let newPresetName = "";
     let newPresetErrorMsg = null;
     let presetModalIsOpen = false;
@@ -111,9 +111,6 @@
     onMount(() => {
         setupSoundStore();
 
-        if ($soundStore?.selected !== undefined) {
-            default_measure_tone = new Tone.Player("house-kick-bassy-punchy-4.wav").toDestination();
-        }
         if (
             typeof $soundStore?.selected == "number" &&
             Array.isArray($soundStore?.soundSets) &&
@@ -126,8 +123,8 @@
                     multi_measure_tones.push(new Tone.Player(soundItem.src).toDestination());
                 else multi_measure_tones.push(default_measure_tone);
             });
-
-            console.log(multi_measure_tones);
+        } else {
+            default_measure_tone = new Tone.Player("house-kick-bassy-punchy-4.wav").toDestination();
         }
 
         strong_tone = new Tone.Player("house-kick-bassy-punchy-4.wav").toDestination();
@@ -190,7 +187,7 @@
                 const now = Tone.now();
                 let timeIncrement = 0;
                 for (let iMeasure = measureCount; iMeasure < numMeasures; iMeasure++) {
-                    let player = strong_tone;
+                    let player = default_measure_tone;
                     if (iMeasure < multi_measure_tones.length) {
                         player = multi_measure_tones[iMeasure];
                     }
@@ -328,10 +325,7 @@
                         </button>
                         <div slot="menu" class="bg-white shadow-lg relative">
                             <div class="border-t-2 border-gray-50">
-                                <ul
-                                    class="py-1 text-sm text-gray-700 dark:text-gray-200"
-                                    aria-labelledby="dropdownDefault"
-                                >
+                                <ul class="py-1 text-sm text-gray-700" aria-labelledby="dropdownDefault">
                                     <li
                                         class="flex items-center py-2 border-b border-sky-200 cursor-pointer"
                                         on:click={() => {
@@ -349,7 +343,7 @@
                                             >
                                             <a
                                                 href="#"
-                                                class="block py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                class="block py-2 hover:bg-gray-100 "
                                                 on:click={() => applyPreset(preset.name)}
                                                 >{preset.name}: {preset.numMeasures} reps, {preset.secsPerMeasure} secs,
                                                 {preset.beatsPerMeasure} beats</a

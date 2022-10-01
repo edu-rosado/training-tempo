@@ -15,12 +15,8 @@
 
     let soundSet = {};
     $: soundItems = soundSet.soundItems ?? [];
-    $: if (soundItems) {
-        console.log(11, soundItems.length);
-        // console.log(22, $soundStore.soundSets[soundSetIndex].soundItems.length);
-        console.log("updated");
-        $soundStore = $soundStore;
-    }
+    $: updateStore(soundItems);
+
     onMount(() => {
         setupSoundStore();
         if ($soundStore.soundSets.length > soundSetIndex) {
@@ -50,19 +46,166 @@
 
     let isRecording = false;
 
-    var blobToBase64 = function (
-        /** @type {Blob} */ blob,
-        /** @type {{ (blob_str: any): void; (arg0: string | ArrayBuffer | null): void; }} */ callback
-    ) {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            const srcUrl = e.target.result;
-            audio = new Audio(srcUrl);
+    function updateStore(_) {
+        $soundStore = $soundStore;
+    }
 
-            callback(srcUrl);
-        };
-        reader.readAsDataURL(blob);
-    };
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    function blobToBase64Url(blob) {
+        var reader = new FileReader();
+        return new Promise((resolve, reject) => {
+            reader.onload = function (e) {
+                // const srcUrl = e.target.result;
+                // audio = new Audio(srcUrl);
+                // callback(srcUrl);
+                resolve(e.target.result);
+            };
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    function blobToAudioBuffer(blob) {
+        const audioContext = new AudioContext();
+        const fileReader = new FileReader();
+
+        return new Promise((resolve, reject) => {
+            fileReader.onloadend = () => {
+                const arrayBuffer = fileReader.result;
+                audioContext.decodeAudioData(arrayBuffer, (audioBuffer) => {
+                    resolve(audioBuffer);
+                });
+            };
+            fileReader.readAsArrayBuffer(blob);
+        });
+    }
+
+    async function processBlobUrl(blobUrl) {
+        // para de URL a blob
+        const response = await fetch(blobUrl);
+        let blob = await response.blob();
+
+        // Preprocesar audio para quitar silencio inicial
+        let audioBuffer = await blobToAudioBuffer(blob);
+
+        audioBuffer = cutIntroSilence(audioBuffer);
+
+        blob = audioBufferToBlob(audioBuffer);
+
+        // Pasar el blob a un string en b64 para meterlo en un Audio
+        const base64Url = await blobToBase64Url(blob);
+        audio = new Audio(base64Url);
+        audio.play();
+
+        selectedItem.sound_type = "recorded";
+        selectedItem.src = base64Url;
+        selectedItem.title = "Recorded";
+        soundItems = soundItems;
+        goToNextItem();
+    }
+
+    function cutIntroSilence(audioBuffer) {
+        const oldArr = audioBuffer.getChannelData(0);
+        let cutoutIndex = null;
+        for (let i = 1; i < oldArr.length; i++) {
+            let prev = oldArr[i - 1];
+            let curr = oldArr[i];
+            if (curr > 0.07 && curr >= prev / 2) {
+                cutoutIndex = i;
+                break;
+            }
+        }
+        let newArr;
+        if (cutoutIndex !== null) {
+            newArr = oldArr.slice(cutoutIndex, oldArr.length);
+        } else {
+            newArr = oldArr;
+        }
+
+        const audioContext = new AudioContext();
+        const durationSecs = newArr.length / audioBuffer.sampleRate;
+        const buffer = audioContext.createBuffer(1, newArr.length, audioBuffer.sampleRate);
+        buffer.copyToChannel(newArr, 0);
+        return buffer;
+    }
+
+    function audioBufferToBlob(audioBuffer) {
+        // get WAV file bytes and audio params of your audio source
+        const wavBytes = getWavBytes(audioBuffer.getChannelData(0).buffer, {
+            isFloat: true, // floating point or 16-bit integer
+            numChannels: 1,
+            sampleRate: audioBuffer.sampleRate,
+        });
+        return new Blob([wavBytes], { type: "audio/wav" });
+    }
+
+    // Returns Uint8Array of WAV bytes
+    function getWavBytes(buffer, options) {
+        const type = options.isFloat ? Float32Array : Uint16Array;
+        const numFrames = buffer.byteLength / type.BYTES_PER_ELEMENT;
+
+        const headerBytes = getWavHeader(Object.assign({}, options, { numFrames }));
+        const wavBytes = new Uint8Array(headerBytes.length + buffer.byteLength);
+
+        // prepend header, then add pcmBytes
+        wavBytes.set(headerBytes, 0);
+        wavBytes.set(new Uint8Array(buffer), headerBytes.length);
+
+        return wavBytes;
+    }
+
+    // adapted from https://gist.github.com/also/900023
+    // returns Uint8Array of WAV header bytes
+    function getWavHeader(options) {
+        const numFrames = options.numFrames;
+        const numChannels = options.numChannels || 2;
+        const sampleRate = options.sampleRate || 44100;
+        const bytesPerSample = options.isFloat ? 4 : 2;
+        const format = options.isFloat ? 3 : 1;
+
+        const blockAlign = numChannels * bytesPerSample;
+        const byteRate = sampleRate * blockAlign;
+        const dataSize = numFrames * blockAlign;
+
+        const buffer = new ArrayBuffer(44);
+        const dv = new DataView(buffer);
+
+        let p = 0;
+
+        function writeString(s) {
+            for (let i = 0; i < s.length; i++) {
+                dv.setUint8(p + i, s.charCodeAt(i));
+            }
+            p += s.length;
+        }
+
+        function writeUint32(d) {
+            dv.setUint32(p, d, true);
+            p += 4;
+        }
+
+        function writeUint16(d) {
+            dv.setUint16(p, d, true);
+            p += 2;
+        }
+
+        writeString("RIFF"); // ChunkID
+        writeUint32(dataSize + 36); // ChunkSize
+        writeString("WAVE"); // Format
+        writeString("fmt "); // Subchunk1ID
+        writeUint32(16); // Subchunk1Size
+        writeUint16(format); // AudioFormat https://i.stack.imgur.com/BuSmb.png
+        writeUint16(numChannels); // NumChannels
+        writeUint32(sampleRate); // SampleRate
+        writeUint32(byteRate); // ByteRate
+        writeUint16(blockAlign); // BlockAlign
+        writeUint16(bytesPerSample * 8); // BitsPerSample
+        writeString("data"); // Subchunk2ID
+        writeUint32(dataSize); // Subchunk2Size
+
+        return new Uint8Array(buffer);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     function goToPrevItem() {
         if (selectedSoundItemPosition == 0) {
@@ -82,15 +225,9 @@
         }
         selectedSoundItemPosition++;
     }
-
-    // onMount(() => {
-    //     if (selectedItem?.src !== undefined) {
-    //         audio = new Audio(selectedItem.src);
-    //     }
-    // });
 </script>
 
-<div class="bg-gray-100 h-screen">
+<div class="bg-gray-100 h-full">
     <div class="p-2 flex items-center">
         <input
             class="w-full rounded-lg px-2 py-1 border border-sky-200 shadow-sm"
@@ -131,16 +268,7 @@
                     on:recordingStarted={() => (isRecording = true)}
                     on:recordingStopped={(ev) => {
                         isRecording = false;
-                        fetch(ev.detail)
-                            .then((response) => response.blob())
-                            .then((blob) => {
-                                blobToBase64(blob, (blob_str) => {
-                                    selectedItem.sound_type = "recorded";
-                                    selectedItem.src = blob_str;
-                                    selectedItem.title = "Recorded";
-                                    soundItems = soundItems;
-                                });
-                            });
+                        processBlobUrl(ev.detail);
                     }}
                 >
                     <span class="material-icons" style="font-size: 2.5rem;">{isRecording ? "stop" : "mic"}</span>
@@ -173,11 +301,11 @@
             </button>
         </div>
 
-        <div class="flex-grow px-1 grid grid-cols-3 gap-1 content-start overflow-y-auto">
-            {#each soundItems as item (item.id)}
+        <div class="flex-grow px-1 grid grid-cols-3 gap-1 content-start overflow-y-auto mb-20">
+            {#each soundItems as item, index (index)}
                 <button
                     class={selectedItem.id === item.id ? soundItemsActiveClass : soundItems_base_class}
-                    on:click={() => (selectedItem.id = item.id)}
+                    on:click={() => (selectedSoundItemPosition = index)}
                 >
                     <span>{item.id}</span>
                     <span class="material-icons ml-1">{soundTypeToIconClass[item.sound_type]}</span>
