@@ -34,7 +34,6 @@
             }
         }
     } else {
-        console.log(pathList);
         title = "TrainingTempo";
     }
 

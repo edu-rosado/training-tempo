@@ -18,9 +18,7 @@
 
     onMount(() => {
         setupSoundStore();
-        console.log(selectedSoundSet);
         selectedSoundSet = $soundStore.selected ?? "default-1";
-        console.log(selectedSoundSet);
     });
 </script>
 
@@ -75,9 +73,7 @@
                 class={selectedSoundSet === index ? checkIconActiveClass : checkIconBaseClass}
                 style="font-size: 2rem; width: fit-content; height: fit-content;"
                 on:click={() => {
-                    console.log("hwudhwhd");
                     selectedSoundSet = index;
-                    console.log(selectedSoundSet);
                 }}>done</span
             >
             <div class="col-span-3">

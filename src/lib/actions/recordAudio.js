@@ -9,8 +9,6 @@ export default function (node) {
     let chunks = [];
 
     function startRecording() {
-        console.log("starting recording");
-
         //////////////////////////
         if (navigator.mediaDevices.getUserMedia) {
             canRecord = true;
