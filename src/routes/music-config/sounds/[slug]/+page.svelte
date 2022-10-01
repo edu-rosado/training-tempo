@@ -3,6 +3,8 @@
     import recordAudioAction from "$lib/actions/recordAudio";
     import { onMount } from "svelte";
     import { soundStore, setupSoundStore } from "$lib/stores/sounds";
+    import DropdownButton from "$lib/components/DropdownButton.svelte";
+    import { goto } from "$app/navigation";
 
     const soundTypeToIconClass = {
         recorded: "mic",
@@ -236,7 +238,21 @@
             type="text"
             bind:value={soundSet.name}
         />
-        <button class="material-icons">more_vert</button>
+        <DropdownButton>
+            <button slot="button" class="material-icons">more_vert</button>
+            <button
+                slot="menu"
+                class="absolute right-0 top-0 p-2 shadow-md rounded-sm bg-slate-100 flex items-center"
+                on:click={() => {
+                    $soundStore.soundSets.splice(soundSetIndex, 1);
+                    $soundStore.soundSets = $soundStore.soundSets;
+                    goto("/music-config");
+                }}
+            >
+                <div class="material-icons mr-2 text-red-400">delete</div>
+                <div class="text-red-500">Delete</div>
+            </button>
+        </DropdownButton>
     </div>
 
     <div class="flex flex-col h-full">

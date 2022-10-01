@@ -1,5 +1,5 @@
 <script>
-    import { soundStore, setupSoundStore } from "$lib/stores/sounds";
+    import { soundStore, setupSoundStore, addNewSoundSet } from "$lib/stores/sounds";
     import { onMount } from "svelte";
 
     let selected_tab = "measure";
@@ -54,7 +54,7 @@
         >
         <div class="col-span-3">
             <div>Default</div>
-            <div class="text-sm">Single sound</div>
+            <div class="text-sm">Built-in - Chimes</div>
         </div>
         <span
             class="material-icons col-span-2 my-auto mx-auto p-1 rounded-full bg-sky-200 text-sky-500 cursor-pointer"
@@ -78,7 +78,7 @@
             >
             <div class="col-span-3">
                 <div>{soundSet.name}</div>
-                <div class="text-sm">Multi sound</div>
+                <div class="text-sm">Custom</div>
             </div>
             <div class="flex justify-center col-span-2">
                 <a class="flex items-center" href="music-config/sounds/{index}">
@@ -91,7 +91,7 @@
         </div>
     {/each}
 
-    <button
+    <button on:click={addNewSoundSet}
         ><span
             class="material-icons fixed bottom-5 right-5 text-indigo-500/75 bg-indigo-200/75 p-2 rounded-full"
             style="font-size: 3rem;">add</span
