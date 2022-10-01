@@ -47,6 +47,7 @@
     let isRecording = false;
 
     function updateStore(_) {
+        console.log("store updated");
         $soundStore = $soundStore;
     }
 
@@ -233,6 +234,7 @@
             class="w-full rounded-lg px-2 py-1 border border-sky-200 shadow-sm"
             placeholder="Preset name"
             type="text"
+            bind:value={soundSet.name}
         />
         <button class="material-icons">more_vert</button>
     </div>
@@ -257,6 +259,12 @@
             <div class="grid grid-cols-4">
                 <button
                     class="bg-sky-300 border border-sky-500 text-sky-600 mx-2 p-2 rounded-lg h-16 text-center flex justify-center items-center"
+                    on:click={() => {
+                        selectedItem.sound_type = "built_in";
+                        selectedItem.src = "/house-kick-bassy-punchy-4.wav";
+                        selectedItem.title = "Built-in - Chimes";
+                        soundItems = soundItems;
+                    }}
                 >
                     <span class="material-icons" style="font-size: 2.5rem;">music_note</span>
                 </button>
@@ -274,12 +282,18 @@
                     <span class="material-icons" style="font-size: 2.5rem;">{isRecording ? "stop" : "mic"}</span>
                 </button>
                 <button
-                    class="bg-sky-300 border border-sky-500 text-sky-600 mx-2 p-2 rounded-lg h-16 text-center flex justify-center items-center"
+                    class="bg-gray-300 border border-sky-500 text-sky-600 mx-2 p-2 rounded-lg h-16 text-center flex justify-center items-center"
                 >
                     <span class="material-icons" style="font-size: 2.5rem;">folder_open</span>
                 </button>
                 <button
                     class="bg-sky-300 border border-sky-500 text-sky-600 mx-2 p-2 rounded-lg h-16 text-center flex justify-center items-center"
+                    on:click={() => {
+                        selectedItem.sound_type = "undefined";
+                        selectedItem.src = undefined;
+                        selectedItem.title = "Not set";
+                        soundItems = soundItems;
+                    }}
                 >
                     <span class="material-icons" style="font-size: 2.5rem;">cancel</span>
                 </button>
