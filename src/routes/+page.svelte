@@ -91,14 +91,8 @@
      * @type {NodeJS.Timeout | undefined}
      */
     let stopTimeout;
-    /**
-     * @type {Tone.Player}
-     */
-    let strong_tone;
-    /**
-     * @type {Tone.Player}
-     */
     let weak_tone;
+    let finish_tone;
 
     let dropdownIsOpen = false;
     let newPresetName = "";
@@ -127,13 +121,8 @@
             default_measure_tone = new Tone.Player("house-kick-bassy-punchy-4.wav").toDestination();
         }
 
-        strong_tone = new Tone.Player("house-kick-bassy-punchy-4.wav").toDestination();
-        // strong_tone = new Tone.Player(
-        //     "blob:http://localhost:5173/df06120c-a1fe-49dd-8f4f-47b8d629f61a"
-        // ).toDestination();
-
-        // weak_tone = new Tone.Player("slap-house-kit-bass-shot.wav").toDestination();
         weak_tone = new Tone.Player("drum-sticks_1bpm_E_minor.wav").toDestination();
+        finish_tone = new Tone.Player("success-notification_C_major.wav").toDestination();
 
         /////////////////////
         setupPresetStore();
@@ -153,9 +142,12 @@
      */
     function toggle_play(ev, is_pause_resume = false) {
         if (playing) {
-            strong_tone.stop();
-            110;
             weak_tone.stop();
+            finish_tone.stop();
+            default_measure_tone.stop();
+            multi_measure_tones.forEach((tone) => {
+                tone.stop();
+            });
             if (stopTimeout !== undefined) {
                 clearTimeout(stopTimeout);
                 stopTimeout = undefined;
@@ -186,10 +178,15 @@
             Tone.loaded().then(() => {
                 const now = Tone.now();
                 let timeIncrement = 0;
-                for (let iMeasure = measureCount; iMeasure < numMeasures; iMeasure++) {
+                for (let iMeasure = measureCount; iMeasure < numMeasures + 1; iMeasure++) {
                     let player = default_measure_tone;
                     if (iMeasure < multi_measure_tones.length) {
                         player = multi_measure_tones[iMeasure];
+                    }
+                    if (iMeasure == numMeasures) {
+                        player.start(now + timeIncrement);
+                        finish_tone.start(now + timeIncrement + 0.7);
+                        break; // Es una iteracion extra para terminar con un strong beat + finishing sound y sin weak beats
                     }
                     for (let iBeat = 0; iBeat < beatsPerMeasure; iBeat++) {
                         player.start(now + timeIncrement);
@@ -204,6 +201,7 @@
                     innerCircleTweened.set(startingAngle, { duration: 0 });
                     innerCircleTweened.set(endingAngle, { duration: secsPerMeasure * 1000 });
                     measureCount++;
+                    console.log(111);
                     if (measureCount == numMeasures) {
                         clearInterval(measureCountIntv);
                     }
@@ -211,10 +209,10 @@
                 stopTimeout = setTimeout(() => {
                     playing = false;
                     measureCount = 0;
+                    console.log(222);
                     innerCircleTweened.set(startingAngle, { duration: 0 });
                     if (measureCountIntv !== undefined) {
                         clearInterval(measureCountIntv);
-                        measureCount = numMeasures;
                     }
                 }, total_duration);
             });
