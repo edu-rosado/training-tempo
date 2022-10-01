@@ -37,6 +37,8 @@
         console.log(pathList);
         title = "TrainingTempo";
     }
+
+    let appBarHeight = "3.5rem";
 </script>
 
 <svelte:head>
@@ -46,8 +48,8 @@
 
 <svelte:window bind:innerHeight />
 
-<div class="h-screen flex flex-col overflow-hidden" style={`height: ${innerHeight}px;`}>
-    <div class="h-14 bg-indigo-600 text-white flex items-center justify-between px-5">
+<div class="flex flex-col overflow-hidden" style={`height: ${innerHeight}px;`}>
+    <div class="bg-indigo-600 text-white flex items-center justify-between px-5" style={`height: ${appBarHeight};`}>
         {#if pathList[1].length > 0}
             <a class="flex" href={prevUrl}><span class="material-icons mr-3">arrow_back_ios</span></a>
         {/if}
@@ -58,7 +60,7 @@
         {/if}
     </div>
 
-    <div class="flex flex-col flex-grow">
+    <div class="flex flex-col" style={`height: calc(${innerHeight}px - ${appBarHeight});`}>
         <slot />
     </div>
 </div>
