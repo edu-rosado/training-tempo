@@ -9,6 +9,7 @@
     import Modal from "$lib/components/Modal.svelte";
     import { presetStore, setupPresetStore } from "$lib/stores/presets";
     import { soundStore, setupSoundStore } from "$lib/stores/sounds";
+    import ExtraSounds from "$lib/components/ExtraSounds.svelte";
 
     let numMeasures = 5;
     let secsPerMeasure = 1;
@@ -399,6 +400,8 @@
     {/each}
     <div class="absolute h-full bg-green-400 rounded-lg" style="width: {$pctCountInterpolated}%" />
 </div>
+
+<ExtraSounds />
 
 <Modal bind:isOpen={presetModalIsOpen}>
     <p slot="title" class="text-2xl text-gray-700">Save new preset</p>
