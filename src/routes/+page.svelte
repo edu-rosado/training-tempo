@@ -17,8 +17,8 @@
     $: if (numMeasures !== "" && numMeasures < 1) {
         numMeasures = 1;
     }
-    $: if (secsPerMeasure !== "" && secsPerMeasure < 1) {
-        secsPerMeasure = 1;
+    $: if (secsPerMeasure !== "" && secsPerMeasure < 0.5) {
+        secsPerMeasure = 0.5;
     }
     $: if (beatsPerMeasure !== "" && beatsPerMeasure < 1) {
         beatsPerMeasure = 1;
@@ -290,8 +290,13 @@
     <div class=" mt-2 space-y-2">
         <div class="inputs">
             <FloatingInputWithButtons bind:value={numMeasures} label="Num Measures" inputClasses="" />
-            <FloatingInputWithButtons bind:value={secsPerMeasure} label="Secs per Measure" inputClasses="" />
-            <FloatingInputWithButtons bind:value={beatsPerMeasure} label="Beats per Measure" inputClasses="" />
+            <FloatingInputWithButtons
+                bind:value={secsPerMeasure}
+                label="Secs/Measure"
+                inputClasses=""
+                buttonValues={[-1, -0.5, 0.5, 1]}
+            />
+            <FloatingInputWithButtons bind:value={beatsPerMeasure} label="Beats/Measure" inputClasses="" />
         </div>
 
         {#if !playing}
@@ -428,8 +433,5 @@
     .inner-popup {
         border: 1px solid #80808000;
         background-color: white;
-    }
-    .inputs :global(input) {
-        width: 10rem;
     }
 </style>
