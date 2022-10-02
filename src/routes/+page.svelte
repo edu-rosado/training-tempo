@@ -106,6 +106,25 @@
     onMount(() => {
         setupSoundStore();
 
+        setupTones();
+
+        /////////////////////
+        setupPresetStore();
+        if ($presetStore.selected !== null && $presetStore.selected !== undefined) {
+            applyPreset($presetStore.selected);
+        }
+    });
+
+    function setupTones(do_reset = false) {
+        if (do_reset) {
+            weak_tone.disconnect();
+            default_measure_tone.disconnect();
+            multi_measure_tones.forEach((tone) => {
+                tone.disconnect();
+            });
+            multi_measure_tones = [];
+            finish_tone.disconnect();
+        }
         if (
             typeof $soundStore?.selected == "number" &&
             Array.isArray($soundStore?.soundSets) &&
@@ -124,13 +143,7 @@
 
         weak_tone = new Tone.Player("drum-sticks_1bpm_E_minor.wav").toDestination();
         finish_tone = new Tone.Player("success-notification_C_major.wav").toDestination();
-
-        /////////////////////
-        setupPresetStore();
-        if ($presetStore.selected !== null && $presetStore.selected !== undefined) {
-            applyPreset($presetStore.selected);
-        }
-    });
+    }
 
     function reset_play() {
         measureCount = 0;
@@ -143,12 +156,10 @@
      */
     function toggle_play(ev, is_pause_resume = false) {
         if (playing) {
-            weak_tone.stop();
-            finish_tone.stop();
-            default_measure_tone.stop();
-            multi_measure_tones.forEach((tone) => {
-                tone.stop();
-            });
+            setupTones(true);
+
+            Tone.Transport.pause();
+
             if (stopTimeout !== undefined) {
                 clearTimeout(stopTimeout);
                 stopTimeout = undefined;
@@ -190,6 +201,7 @@
                         break; // Es una iteracion extra para terminar con un strong beat + finishing sound y sin weak beats
                     }
                     for (let iBeat = 0; iBeat < beatsPerMeasure; iBeat++) {
+                        console.log("playing");
                         player.start(now + timeIncrement);
                         player = weak_tone;
                         timeIncrement += secsPerBeat;
