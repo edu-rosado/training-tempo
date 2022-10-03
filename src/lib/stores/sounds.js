@@ -8,7 +8,7 @@ export const soundStore = writable({
             soundItems: [
                 {
                     id: "Default",
-                    sound_type: "recorded",
+                    sound_type: "local_file",
                     title: "Built-in - Chimes",
                     src: "/house-kick-bassy-punchy-4.wav",
                 },
@@ -30,6 +30,47 @@ function setupSoundStore_aux() {
         tempVal = JSON.parse(localStorage.sounds);
     } catch {}
     if (typeof tempVal === "object" && tempVal !== null) {
+        let found = false
+        for (let i = 0; i < tempVal.soundSets; i++){
+            if (tempVal.soundSets[i].name === "Default spanish"){
+                found = true
+                break
+            }
+        }
+        if (!found){
+            // meter default spanish
+            const spanishSet = {
+                name: "Default spanish",
+                soundItems: [
+                    {
+                        id: "Default",
+                        sound_type: "local_file",
+                        title: "Built-in - Chimes",
+                        src: "/house-kick-bassy-punchy-4.wav",
+                    },
+                ],
+            }
+            for (let i = 1; i <= 100; i++){
+                if (i > 30 && i % 10 != 0){
+                    spanishSet.soundItems.push({
+                        id: i.toString(),
+                        sound_type: "undefined",
+                        title: "Not set",
+                    })
+                }
+                else{
+                    spanishSet.soundItems.push({
+                        id: i.toString(),
+                        sound_type: "local_file",
+                        title: "Local file - " + i,
+                        src: "/spanish_counts/" + i + ".mp3",
+                    })
+                }
+
+            }
+            tempVal.soundSets.push(spanishSet)
+        }
+        
         soundStore.set(tempVal);
     }
     soundStore.subscribe((newVal) => {

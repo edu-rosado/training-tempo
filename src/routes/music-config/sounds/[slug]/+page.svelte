@@ -42,6 +42,8 @@
         audio = new Audio(selectedItem.src);
     }
 
+    let fileInput
+
     const soundItems_base_class = "flex justify-center items-center py-2 rounded-sm bg-indigo-100 text-gray-600";
     const soundItemsActiveClass =
         "flex justify-center items-center py-2 rounded-sm bg-sky-400 border-2 border-sky-200 text-white font-bold";
@@ -99,9 +101,7 @@
         audio = new Audio(base64Url);
         audio.play();
 
-        selectedItem.sound_type = "recorded";
         selectedItem.src = base64Url;
-        selectedItem.title = "Recorded";
         soundItems = soundItems;
         goToNextItem();
     }
@@ -113,7 +113,7 @@
             let prev = oldArr[i - 1];
             let curr = oldArr[i];
             if (curr > 0.07 && curr >= prev / 2) {
-                cutoutIndex = i;
+                cutoutIndex = Math.max(0, i-(audioBuffer.sampleRate / 100)); // 100ms antes o el comienzo del audio
                 break;
             }
         }
@@ -293,14 +293,26 @@
                     on:recordingStopped={(ev) => {
                         isRecording = false;
                         processBlobUrl(ev.detail);
+                        selectedItem.sound_type = "recorded";
+                        selectedItem.title = "Recorded";
+
                     }}
                 >
                     <span class="material-icons" style="font-size: 2.5rem;">{isRecording ? "stop" : "mic"}</span>
                 </button>
                 <button
-                    class="bg-gray-300 border border-sky-500 text-sky-600 mx-2 p-2 rounded-lg h-16 text-center flex justify-center items-center"
+                    class="bg-sky-300 border border-sky-500 text-sky-600 mx-2 p-2 rounded-lg h-16 text-center flex justify-center items-center"
                 >
-                    <span class="material-icons" style="font-size: 2.5rem;">folder_open</span>
+                    <span class="material-icons" style="font-size: 2.5rem;" on:click={()=>{
+                        fileInput.click()
+                    }}>folder_open</span>
+                    <input type="file" class="hidden" bind:this={fileInput} on:change={(ev)=>{
+                        const urlObj = URL.createObjectURL(ev.target.files[0])
+                        processBlobUrl(urlObj);
+                        selectedItem.sound_type = "local_file";
+                        selectedItem.title = "Local file";
+                        
+                    }}>
                 </button>
                 <button
                     class="bg-sky-300 border border-sky-500 text-sky-600 mx-2 p-2 rounded-lg h-16 text-center flex justify-center items-center"
