@@ -2,74 +2,38 @@
     import { onMount } from "svelte";
 
     let menu_is_expanded = false;
-    let audio_repetimos, audio_fail, audio_aplauso, audio_codos, audio_rodillas, audio_talones, audio_pecho;
     let allSounds = [];
 
     onMount(() => {
-        audio_repetimos = new Audio("extra-sounds/repetimos.mp3");
-        audio_fail = new Audio("extra-sounds/fail.wav");
-        audio_aplauso = new Audio("extra-sounds/aplauso.wav");
-
-        audio_codos = new Audio("extra-sounds/codos.mp3");
-        audio_rodillas = new Audio("extra-sounds/rodillas.mp3");
-        audio_talones = new Audio("extra-sounds/talones.mp3");
-        audio_pecho = new Audio("extra-sounds/pecho.mp3");
         allSounds = [
             {
-                audio: audio_repetimos,
-                label: "Repetimos",
-            },
-            {
-                audio: audio_fail,
+                audio: new Audio("extra-sounds/fail.wav"),
                 label: "Fail",
             },
             {
-                audio: audio_aplauso,
-                label: "Aplauso",
-            },
-            {
-                audio: audio_codos,
-                label: "Codos",
-            },
-            {
-                audio: audio_rodillas,
-                label: "Rodillas",
-            },
-            {
-                audio: audio_talones,
-                label: "Talones",
-            },
-            {
-                audio: audio_pecho,
-                label: "Pecho",
+                audio: new Audio("extra-sounds/aplauso.wav"),
+                label: "Clapping",
             },
         ];
     });
 </script>
 
-<div
-    class="absolute bottom-0 left-5 rounded-lg p-1 bg-orange-200 overflow-y-auto border-2 border-amber-100"
-    style={menu_is_expanded
-        ? "max-width: 90vw; max-height: 120px;"
-        : "max-width: 90vw; max-height: 120px; border-top-left-radius: 100px; border-top-right-radius: 100px;"}
->
+<div class="absolute bottom-0 w-full">
     <div
-        class="flex justify-center items-center text-orange-900 cursor-pointer"
-        class:pr-2={menu_is_expanded}
-        class:w-12={!menu_is_expanded}
+        class="ml-10 w-fit h-12 rounded-lg p-1 bg-slate-100 overflow-y-hidden rounded-t-full  border border-slate-200"
         on:click={() => {
             menu_is_expanded = !menu_is_expanded;
         }}
     >
-        <div class="material-icons" style="font-size: {menu_is_expanded ? '3' : '2'}rem;">
+        <div class="material-icons -translate-y-2 text-slate-700" style="font-size: 3rem;">
             {menu_is_expanded ? "expand_more" : "expand_less"}
         </div>
-        <div class="" class:hidden={!menu_is_expanded}>Extra sounds</div>
     </div>
-    <div class="grid grid-cols-3">
+
+    <div class="grid grid-cols-3 bg-slate-100 p-1 border border-t-slate-300 overflow-y-auto" style="max-height: 178px">
         {#each allSounds as soundItem (soundItem.label)}
             <button
-                class="p-3 m-1 flex justify-center items-center bg-amber-600 text-amber-200 rounded-md"
+                class="p-3 m-1 flex justify-center items-center bg-sky-600 text-sky-200 rounded-md break-all"
                 class:hidden={!menu_is_expanded}
                 on:click={() => soundItem.audio.play()}>{soundItem.label}</button
             >
