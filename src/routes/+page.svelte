@@ -11,9 +11,13 @@
     import { soundStore, setupSoundStore } from "$lib/stores/sounds";
     import ExtraSounds from "$lib/components/ExtraSounds.svelte";
 
-    let numMeasures = 5;
-    let secsPerMeasure = 1;
-    let beatsPerMeasure = 2;
+    let numMeasures = null;
+    let secsPerMeasure = null;
+    let beatsPerMeasure = null;
+    let presetStoreMounted = false;
+    $: if (presetStoreMounted) {
+        updateCurrentConfig(numMeasures, secsPerMeasure, beatsPerMeasure);
+    }
     $: if (numMeasures !== "" && numMeasures < 1) {
         numMeasures = 1;
     }
@@ -110,9 +114,12 @@
 
         /////////////////////
         setupPresetStore();
-        if ($presetStore.selected !== null && $presetStore.selected !== undefined) {
-            applyPreset($presetStore.selected);
+        if ($presetStore.currentConfig != null) {
+            numMeasures = $presetStore.currentConfig.numMeasures;
+            secsPerMeasure = $presetStore.currentConfig.secsPerMeasure;
+            beatsPerMeasure = $presetStore.currentConfig.beatsPerMeasure;
         }
+        presetStoreMounted = true;
     });
 
     function setupTones(do_reset = false) {
@@ -201,7 +208,6 @@
                         break; // Es una iteracion extra para terminar con un strong beat + finishing sound y sin weak beats
                     }
                     for (let iBeat = 0; iBeat < beatsPerMeasure; iBeat++) {
-                        console.log("playing");
                         player.start(now + timeIncrement);
                         player = weak_tone;
                         timeIncrement += secsPerBeat;
@@ -214,7 +220,6 @@
                     innerCircleTweened.set(startingAngle, { duration: 0 });
                     innerCircleTweened.set(endingAngle, { duration: secsPerMeasure * 1000 });
                     measureCount++;
-                    console.log(111);
                     if (measureCount == numMeasures) {
                         clearInterval(measureCountIntv);
                     }
@@ -222,7 +227,6 @@
                 stopTimeout = setTimeout(() => {
                     playing = false;
                     measureCount = 0;
-                    console.log(222);
                     innerCircleTweened.set(startingAngle, { duration: 0 });
                     if (measureCountIntv !== undefined) {
                         clearInterval(measureCountIntv);
@@ -243,7 +247,11 @@
             presetStore.update((last) => {
                 return {
                     ...last,
-                    selected: name,
+                    currentConfig: {
+                        numMeasures: with_same_name[0].numMeasures,
+                        secsPerMeasure: with_same_name[0].secsPerMeasure,
+                        beatsPerMeasure: with_same_name[0].beatsPerMeasure,
+                    },
                 };
             });
         }
@@ -295,6 +303,18 @@
         newPresetName = "";
         presetModalIsOpen = false;
         dropdownIsOpen = true;
+    }
+
+    function updateCurrentConfig(numMeasures, secsPerMeasure, beatsPerMeasure) {
+        if (numMeasures == null || secsPerMeasure == null || beatsPerMeasure == null) {
+            return;
+        }
+        presetStore.update((prev) => {
+            return {
+                ...prev,
+                currentConfig: { numMeasures, secsPerMeasure, beatsPerMeasure },
+            };
+        });
     }
 </script>
 

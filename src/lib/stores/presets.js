@@ -1,11 +1,15 @@
 import { writable } from "svelte/store";
 
 export const presetStore = writable({
-    selected: null,
+    currentConfig: {
+        numMeasures: 20,
+        secsPerMeasure: 2,
+        beatsPerMeasure: 2,
+    },
     presets: [
         {
             name: "Preset1",
-            numMeasures: 3,
+            numMeasures: 20,
             secsPerMeasure: 2,
             beatsPerMeasure: 2,
         },
@@ -15,13 +19,13 @@ export const presetStore = writable({
 let STORE_IS_SETUP = false;
 export function setupPresetStore() {
     if (!STORE_IS_SETUP) {
-        STORE_IS_SETUP = true; // singleton
+        // STORE_IS_SETUP = true; // singleton desabilitado
         setupPresetStore_aux();
     }
 }
 function setupPresetStore_aux() {
     let tempVal;
-    let initVal = { selected: null, presets: [] };
+    let initVal = { presets: [] };
     try {
         tempVal = JSON.parse(localStorage.presets);
     } catch {}
@@ -43,11 +47,11 @@ function setupPresetStore_aux() {
                     secsPerMeasure: parseInt(val.secsPerMeasure),
                     beatsPerMeasure: parseInt(val.beatsPerMeasure),
                 });
-                if (tempVal.selected === val.name) {
-                    initVal.selected = val.name;
-                }
             }
         });
+        if (tempVal.currentConfig != null) {
+            initVal.currentConfig = tempVal.currentConfig;
+        }
         presetStore.set(initVal);
     }
     presetStore.subscribe((newVal) => {
