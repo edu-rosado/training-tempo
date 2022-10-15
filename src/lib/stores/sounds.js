@@ -15,6 +15,7 @@ function setupDefaultSpanish(storeData, increment, title) {
         const spanishSet = {
             name: title,
             id: storeData.nextSoundSetId++,
+            isDefault: true,
             soundItems: [
                 {
                     id: "Default",
@@ -59,6 +60,7 @@ export function addNewSoundSet() {
                 {
                     id: prev.nextSoundSetId,
                     name: new_name,
+                    isDefault: false,
                     soundItems: [
                         {
                             id: "Default",
@@ -78,8 +80,9 @@ const defaultVal = {
     nextSoundSetId: 1,
     soundSets: [
         {
-            name: "Custom 1",
+            name: "Built-in - Chimes",
             id: 0,
+            isDefault: true,
             soundItems: [
                 {
                     id: "Default",
@@ -95,4 +98,4 @@ const defaultVal = {
 setupDefaultSpanish(defaultVal, 1, "Default spanish");
 setupDefaultSpanish(defaultVal, 5, "Default spanish 5 by 5");
 
-export const soundStore = createWritableStore("sounds2", defaultVal);
+export const soundStore = createWritableStore("sounds", defaultVal);
