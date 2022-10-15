@@ -1,20 +1,20 @@
 <script>
     import { onMount } from "svelte";
+    import { extraSoundsStore } from "$lib/stores/extraSounds";
 
     let menu_is_expanded = false;
     let allSounds = [];
 
     onMount(() => {
-        allSounds = [
-            {
-                audio: new Audio("extra-sounds/fail.wav"),
-                label: "Fail",
-            },
-            {
-                audio: new Audio("extra-sounds/aplauso.wav"),
-                label: "Clapping",
-            },
-        ];
+        extraSoundsStore.useLocalStorage();
+        allSounds = $extraSoundsStore.soundList
+            .filter((item) => item.url != null)
+            .map((item) => {
+                return {
+                    audio: new Audio(item.url),
+                    label: item.label,
+                };
+            });
     });
 </script>
 
