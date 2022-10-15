@@ -8,7 +8,7 @@
     import FloatingInput from "$lib/components/FloatingInput.svelte";
     import Modal from "$lib/components/Modal.svelte";
     import { presetStore, setupPresetStore } from "$lib/stores/presets";
-    import { soundStore, setupSoundStore } from "$lib/stores/sounds";
+    import { soundStore } from "$lib/stores/sounds";
     import ExtraSounds from "$lib/components/ExtraSounds.svelte";
 
     let numMeasures = null;
@@ -108,7 +108,7 @@
     let multi_measure_tones = [];
 
     onMount(() => {
-        setupSoundStore();
+        soundStore.useLocalStorage();
 
         setupTones();
 

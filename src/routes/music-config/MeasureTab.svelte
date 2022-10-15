@@ -1,5 +1,5 @@
 <script>
-    import { soundStore, setupSoundStore, addNewSoundSet } from "$lib/stores/sounds";
+    import { soundStore, addNewSoundSet } from "$lib/stores/sounds";
     import { onMount } from "svelte";
 
     let selectedSoundSet;
@@ -12,7 +12,7 @@
     const checkIconActiveClass = "material-icons p-1 rounded-full bg-green-300 text-green-600 my-auto cursor-pointer";
 
     onMount(() => {
-        setupSoundStore();
+        soundStore.useLocalStorage();
         selectedSoundSet = $soundStore.selected ?? "default-1";
     });
 </script>

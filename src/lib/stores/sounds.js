@@ -1,50 +1,10 @@
-import { writable } from "svelte/store";
+import { createWritableStore } from "./utils";
 
-export const soundStore = writable({
-    selected: "default-1",
-    soundSets: [
-        {
-            name: "Custom 1",
-            soundItems: [
-                {
-                    id: "Default",
-                    sound_type: "local_file",
-                    title: "Built-in - Chimes",
-                    src: "/house-kick-bassy-punchy-4.wav",
-                },
-            ],
-        },
-    ],
-});
-
-let STORE_IS_SETUP = false;
-export function setupSoundStore() {
-    if (!STORE_IS_SETUP) {
-        STORE_IS_SETUP = true; // singleton
-        setupSoundStore_aux();
-    }
-}
-function setupSoundStore_aux() {
-    let tempVal;
-    try {
-        tempVal = JSON.parse(localStorage.sounds);
-    } catch {}
-    if (typeof tempVal === "object" && tempVal !== null) {
-        setupDefaultSpanish(tempVal, 1, "Default spanish");
-        setupDefaultSpanish(tempVal, 5, "Default spanish 5 by 5");
-
-        soundStore.set(tempVal);
-    }
-    soundStore.subscribe((newVal) => {
-        localStorage.sounds = JSON.stringify(newVal);
-    });
-}
-
-function setupDefaultSpanish(tempVal, increment, title) {
+function setupDefaultSpanish(storeData, increment, title) {
     // Increment: solo ara valores < 30, cual es el incremento entre ellos
     let found = false;
-    for (let i = 0; i < tempVal.soundSets; i++) {
-        if (tempVal.soundSets[i].name === title) {
+    for (let i = 0; i < storeData.soundSets; i++) {
+        if (storeData.soundSets[i].name === title) {
             found = true;
             break;
         }
@@ -54,6 +14,7 @@ function setupDefaultSpanish(tempVal, increment, title) {
         // meter default spanish
         const spanishSet = {
             name: title,
+            id: storeData.nextSoundSetId++,
             soundItems: [
                 {
                     id: "Default",
@@ -79,7 +40,7 @@ function setupDefaultSpanish(tempVal, increment, title) {
                 });
             }
         }
-        tempVal.soundSets.push(spanishSet);
+        storeData.soundSets.push(spanishSet);
     }
 }
 
@@ -92,9 +53,11 @@ export function addNewSoundSet() {
         }
         return {
             ...prev,
+            nextSoundSetId: prev.nextSoundSetId + 1,
             soundSets: [
                 ...prev.soundSets,
                 {
+                    id: prev.nextSoundSetId,
                     name: new_name,
                     soundItems: [
                         {
@@ -109,3 +72,27 @@ export function addNewSoundSet() {
         };
     });
 }
+
+const defaultVal = {
+    selected: "default-1",
+    nextSoundSetId: 1,
+    soundSets: [
+        {
+            name: "Custom 1",
+            id: 0,
+            soundItems: [
+                {
+                    id: "Default",
+                    sound_type: "local_file",
+                    title: "Built-in - Chimes",
+                    src: "/house-kick-bassy-punchy-4.wav",
+                },
+            ],
+        },
+    ],
+};
+
+setupDefaultSpanish(defaultVal, 1, "Default spanish");
+setupDefaultSpanish(defaultVal, 5, "Default spanish 5 by 5");
+
+export const soundStore = createWritableStore("sounds2", defaultVal);

@@ -2,7 +2,7 @@
     import { page } from "$app/stores";
     import recordAudioAction from "$lib/actions/recordAudio";
     import { onMount } from "svelte";
-    import { soundStore, setupSoundStore } from "$lib/stores/sounds";
+    import { soundStore } from "$lib/stores/sounds";
     import DropdownButton from "$lib/components/DropdownButton.svelte";
     import { goto } from "$app/navigation";
     import { processBlobUrl } from "$lib/utilities/audioProcessing";
@@ -21,7 +21,7 @@
     $: updateStore(soundItems);
 
     onMount(() => {
-        setupSoundStore();
+        soundStore.useLocalStorage();
         if ($soundStore.soundSets.length > soundSetIndex) {
             soundSet = $soundStore.soundSets[soundSetIndex];
         } else {
