@@ -20,7 +20,7 @@
 
 <div class="absolute bottom-0 w-full">
     <div
-        class="ml-10 w-fit h-12 rounded-lg p-1 bg-slate-100 overflow-y-hidden rounded-t-full  border border-slate-200"
+        class="ml-10 w-fit h-12 rounded-lg p-1 bg-slate-100 overflow-y-hidden rounded-t-full  border border-slate-200 cursor-pointer"
         on:click={() => {
             menu_is_expanded = !menu_is_expanded;
         }}
