@@ -29,9 +29,7 @@ export default function (node) {
                 mediaRecorder.start();
                 //////////////////////////////////////////////
             };
-            const onError = function (err) {
-                console.log("The following error occured: " + err);
-            };
+            const onError = function (err) {};
             navigator.mediaDevices.getUserMedia(constraints).then(onSuccess, onError);
         } else {
             {

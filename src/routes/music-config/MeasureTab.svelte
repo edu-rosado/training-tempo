@@ -4,7 +4,6 @@
 
     let selectedSoundSet;
     $: if (selectedSoundSet !== undefined) {
-        console.log("upp");
         $soundStore.selected = selectedSoundSet;
     }
 
