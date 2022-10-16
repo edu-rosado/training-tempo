@@ -107,7 +107,11 @@
     let default_measure_tone;
     let multi_measure_tones = [];
 
+    let isMobile = true;
+
     onMount(() => {
+        isMobile = window.matchMedia("(max-width: 480px)").matches;
+
         soundStore.useLocalStorage();
 
         setupTones();
@@ -351,7 +355,7 @@
                     >
                     <DropdownButton
                         bind:isActive={dropdownIsOpen}
-                        menuStyles="right: 0; width: calc(100vw - 1rem); z-index: 1"
+                        menuStyles="right: 0; width: {isMobile ? 'calc(100vw - 1rem)' : '400px'}; z-index: 1"
                     >
                         <button
                             slot="button"

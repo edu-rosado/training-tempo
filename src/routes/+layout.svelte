@@ -48,15 +48,17 @@
 <svelte:window bind:innerHeight />
 
 <div class="flex flex-col overflow-hidden" style={`height: ${innerHeight}px;`}>
-    <div class="bg-indigo-600 text-white flex items-center justify-between px-5" style={`height: ${appBarHeight};`}>
-        {#if pathList[1].length > 0}
-            <a class="flex" href={prevUrl}><span class="material-icons mr-3">arrow_back_ios</span></a>
-        {/if}
-        <h1 class="flex-grow text-center" style="margin-top: 0.1rem;">{title}</h1>
+    <div class="bg-indigo-600 text-white px-5" style={`height: ${appBarHeight};`}>
+        <div class="mx-auto h-5/6 flex items-center justify-between" style="max-width: 800px;">
+            {#if pathList[1].length > 0}
+                <a class="flex" href={prevUrl}><span class="material-icons mr-3">arrow_back_ios</span></a>
+            {/if}
+            <h1 class="flex-grow text-center" style="margin-top: 0.1rem;">{title}</h1>
 
-        {#if pathList[1].length == 0}
-            <a href="/music-config" class="flex"><span class="material-icons cursor-pointer">music_note</span></a>
-        {/if}
+            {#if pathList[1].length == 0}
+                <a href="/music-config" class="flex"><span class="material-icons cursor-pointer">music_note</span></a>
+            {/if}
+        </div>
     </div>
 
     <div class="flex justify-center">
