@@ -64,7 +64,7 @@
     <div class="flex justify-center">
         <div
             class="relative flex-grow flex flex-col"
-            style={`height: calc(${innerHeight}px - ${appBarHeight}); max-width: 460px;`}
+            style={`height: calc(${innerHeight}px - ${appBarHeight}); max-width: min(460px,100vw);`}
         >
             <slot />
         </div>
