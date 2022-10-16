@@ -59,8 +59,13 @@
         {/if}
     </div>
 
-    <div class="flex flex-col" style={`height: calc(${innerHeight}px - ${appBarHeight});`}>
-        <slot />
+    <div class="flex justify-center">
+        <div
+            class="relative flex-grow flex flex-col"
+            style={`height: calc(${innerHeight}px - ${appBarHeight}); max-width: 800px;`}
+        >
+            <slot />
+        </div>
     </div>
 </div>
 
