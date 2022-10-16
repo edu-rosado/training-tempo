@@ -2,8 +2,9 @@
     import { onMount } from "svelte";
     import { extraSoundsStore } from "$lib/stores/extraSounds";
 
-    let menu_is_expanded = false;
     let allSounds = [];
+    export let isMobile = true;
+    $: menu_is_expanded = !isMobile;
 
     onMount(() => {
         extraSoundsStore.useLocalStorage();

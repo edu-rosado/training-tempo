@@ -49,7 +49,7 @@
 
 <div class="flex flex-col overflow-hidden" style={`height: ${innerHeight}px;`}>
     <div class="bg-indigo-600 text-white px-5" style={`height: ${appBarHeight};`}>
-        <div class="mx-auto h-5/6 flex items-center justify-between" style="max-width: 800px;">
+        <div class="mx-auto h-5/6 flex items-center justify-between" style="max-width: 460px;">
             {#if pathList[1].length > 0}
                 <a class="flex" href={prevUrl}><span class="material-icons mr-3">arrow_back_ios</span></a>
             {/if}
@@ -64,7 +64,7 @@
     <div class="flex justify-center">
         <div
             class="relative flex-grow flex flex-col"
-            style={`height: calc(${innerHeight}px - ${appBarHeight}); max-width: 800px;`}
+            style={`height: calc(${innerHeight}px - ${appBarHeight}); max-width: 460px;`}
         >
             <slot />
         </div>

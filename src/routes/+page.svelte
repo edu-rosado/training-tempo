@@ -408,7 +408,7 @@
     </div>
 </div>
 
-<div class="flex-grow flex justify-center items-center">
+<div class="flex-grow flex justify-center items-center" style="max-height: 300px;">
     <div
         bind:clientWidth={outerCircleWidth}
         class="h-36 w-36 rounded-full bg-slate-300 p-28 flex justify-center items-center relative"
@@ -442,7 +442,7 @@
     <div class="absolute h-full bg-green-400 rounded-lg" style="width: {$pctCountInterpolated}%" />
 </div>
 
-<ExtraSounds />
+<ExtraSounds {isMobile} />
 
 <Modal bind:isOpen={presetModalIsOpen}>
     <p slot="title" class="text-2xl text-gray-700">Save new preset</p>
