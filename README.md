@@ -1,38 +1,8 @@
-# create-svelte
+# TrainingTempo
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+### A simple metronome / stopwatch made with Svelte and Sveltekit
 
-## Creating a project
+Designed with artistic gymnastics training in mind, TrainingTempo allows you to do exercises at a certain candency just like a metronome would let you do, with the additional feature of setting the number of repetitions you want to perform, after which it will stop. I couldn't find a metronome with this feature (with a quick search) so here's one.
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+It's a very simple implementation, closer to a proof of concept than to a real product, however it works without issue at the time of writing.
+Demo is being hosted for the moment at Vercel [here](https://training-tempo.vercel.app/)
