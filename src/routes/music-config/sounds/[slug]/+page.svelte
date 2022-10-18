@@ -35,7 +35,7 @@
     /**
      * @type {HTMLAudioElement}
      */
-    let audio; // = new Audio("/house-kick-bassy-punchy-4.wav");
+    let audio; // = new Audio("/strong_beat_3.wav");
 
     let selectedSoundItemPosition = 0;
     $: selectedItem = soundItems.length > 0 ? soundItems[selectedSoundItemPosition] : {};
@@ -122,7 +122,7 @@
                     class="bg-sky-300 border border-sky-500 text-sky-600 mx-2 p-2 rounded-lg h-16 text-center flex justify-center items-center"
                     on:click={() => {
                         selectedItem.sound_type = "built_in";
-                        selectedItem.src = "/house-kick-bassy-punchy-4.wav";
+                        selectedItem.src = "/strong_beat_3.wav";
                         selectedItem.title = "Built-in - Chimes";
                         soundItems = soundItems;
                     }}

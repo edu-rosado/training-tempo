@@ -37,7 +37,7 @@
                         class="material-icons col-span-2 my-auto mx-auto p-1 rounded-full bg-sky-200 text-sky-500 cursor-pointer"
                         style="font-size: 2rem; width: fit-content; height: fit-content;"
                         on:click={() => {
-                            const audio = new Audio("/house-kick-bassy-punchy-4.wav");
+                            const audio = new Audio("/strong_beat_3.wav");
                             audio.play();
                         }}
                         >play_arrow

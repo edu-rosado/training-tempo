@@ -149,10 +149,10 @@
                 else multi_measure_tones.push(default_measure_tone);
             });
         } else {
-            default_measure_tone = new Tone.Player("house-kick-bassy-punchy-4.wav").toDestination();
+            default_measure_tone = new Tone.Player("strong_beat_3.wav").toDestination();
         }
 
-        weak_tone = new Tone.Player("drum-sticks_1bpm_E_minor.wav").toDestination();
+        weak_tone = new Tone.Player("default_weak_beat.wav").toDestination();
         finish_tone = new Tone.Player("success-notification_C_major.wav").toDestination();
     }
 
