@@ -4,7 +4,7 @@
     import { processBlobUrl } from "$lib/utilities/audioProcessing";
     import { extraSoundsStore } from "$lib/stores/extraSounds";
 
-    let isRecording = false;
+    let recordingId = null;
 
     let fileInput;
 
@@ -28,6 +28,12 @@
                         if (extraSound.url != null) {
                             const audio = new Audio(extraSound.url);
                             audio.play();
+                        } else if (extraSound.urlKey != null) {
+                            const url = localStorage.getItem(extraSound.urlKey);
+                            if (url != null) {
+                                const audio = new Audio(url);
+                                audio.play();
+                            }
                         }
                     }}>play_arrow</button
                 >
@@ -35,18 +41,20 @@
                 <!-- ///////////////////////// -->
                 {#if !extraSound.isDefault}
                     <button
-                        class={isRecording
+                        class={recordingId == extraSound.id
                             ? "bg-red-300 border border-red-500 text-red-600 mx-1 p-2 rounded-lg text-center flex justify-center items-center"
                             : "bg-sky-300 border border-sky-500 text-sky-600 mx-1 p-2 rounded-lg text-center flex justify-center items-center"}
                         use:recordAudioAction
-                        on:recordingStarted={() => (isRecording = true)}
+                        on:recordingStarted={() => (recordingId = extraSound.id)}
                         on:recordingStopped={async (ev) => {
-                            isRecording = false;
-                            extraSound.url = await processBlobUrl(ev.detail);
-                            $extraSoundsStore = $extraSoundsStore;
+                            recordingId = null;
+                            const url = await processBlobUrl(ev.detail, false);
+                            localStorage.setItem(extraSound.urlKey, url);
                         }}
                     >
-                        <span class="material-icons" style="font-size: 2rem;">{isRecording ? "stop" : "mic"}</span>
+                        <span class="material-icons" style="font-size: 2rem;"
+                            >{recordingId == extraSound.id ? "stop" : "mic"}</span
+                        >
                     </button>
                     <button
                         class="bg-sky-300 border border-sky-500 text-sky-600 mx-1 p-2 rounded-lg text-center flex justify-center items-center"
@@ -64,14 +72,15 @@
                             bind:this={fileInput}
                             on:change={async (ev) => {
                                 const urlObj = URL.createObjectURL(ev.target.files[0]);
-                                extraSound.url = await processBlobUrl(urlObj);
-                                $extraSoundsStore = $extraSoundsStore;
+                                const url = await processBlobUrl(urlObj);
+                                localStorage.setItem(extraSound.urlKey, url);
                             }}
                         />
                     </button>
                     <button
                         class="h-fit my-auto text-red-500 mx-1 ml-2 rounded-full text-center flex justify-center items-center"
                         on:click={() => {
+                            localStorage.removeItem(extraSound.urlKey);
                             $extraSoundsStore.soundList = $extraSoundsStore.soundList.filter(
                                 (item) => item.id != extraSound.id
                             );
@@ -91,10 +100,11 @@
             if (label.length == 0) {
                 label = "new sound";
             }
+            const newId = $extraSoundsStore.nextId++;
             $extraSoundsStore.soundList.push({
-                id: $extraSoundsStore.nextId++,
+                id: newId,
                 label,
-                url: null,
+                urlKey: "extraSounds-" + newId,
                 isDefault: false,
             });
             $extraSoundsStore = $extraSoundsStore;

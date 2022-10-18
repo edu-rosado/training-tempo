@@ -9,10 +9,16 @@
     onMount(() => {
         extraSoundsStore.useLocalStorage();
         allSounds = $extraSoundsStore.soundList
-            .filter((item) => item.url != null)
+            .filter((item) => item.url != null || item.urlKey != null)
             .map((item) => {
+                let url;
+                if (item.url != null) {
+                    url = item.url;
+                } else if (item.urlKey != null) {
+                    url = localStorage.getItem(item.urlKey);
+                }
                 return {
-                    audio: new Audio(item.url),
+                    audio: new Audio(url),
                     label: item.label,
                 };
             });

@@ -1,5 +1,7 @@
 import { createWritableStore } from "./utils";
 
+// The defaults ones have url directly while the others will have a urlKey, which is a localStorage key where the actual url is stored
+
 const defaultVal = {
     soundList: [
         {

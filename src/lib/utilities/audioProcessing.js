@@ -24,7 +24,7 @@ function blobToAudioBuffer(blob) {
     });
 }
 
-export async function processBlobUrl(blobUrl) {
+export async function processBlobUrl(blobUrl, cutInitialSilence = true) {
     // para de URL a blob
     const response = await fetch(blobUrl);
     let blob = await response.blob();
@@ -32,7 +32,9 @@ export async function processBlobUrl(blobUrl) {
     // Preprocesar audio para quitar silencio inicial
     let audioBuffer = await blobToAudioBuffer(blob);
 
-    audioBuffer = cutIntroSilence(audioBuffer);
+    if (cutInitialSilence) {
+        audioBuffer = cutIntroSilence(audioBuffer);
+    }
 
     blob = audioBufferToBlob(audioBuffer);
 
